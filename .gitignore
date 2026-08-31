@@ -18,7 +18,7 @@ dist/
 dist-ssr/
 *.local
 
-# Editor
+# Editor 
 .vscode/
 .idea/
 .DS_Store
