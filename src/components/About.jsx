@@ -1,7 +1,11 @@
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaGraduationCap, FaLaptopCode, FaUsers, FaAward, FaCheckCircle, FaArrowRight } from "react-icons/fa";
+import videoBg from "../assets/video1.mp4";
 
 export default function About() {
+  const [videoError, setVideoError] = useState(false);
+
   const stats = [
     { label: "Active Learners", value: "15,000+", icon: <FaUsers className="text-indigo-400" size={24} /> },
     { label: "Expert Courses", value: "120+", icon: <FaLaptopCode className="text-violet-400" size={24} /> },
@@ -17,14 +21,35 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-white selection:bg-indigo-500 selection:text-white relative overflow-hidden">
       
+      {/* Background Video & Dark Overlay Container */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-slate-950">
+        {!videoError ? (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            onError={() => setVideoError(true)}
+            className="w-full h-full object-cover scale-105 filter brightness-50 contrast-125"
+          >
+            <source src={videoBg} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/50 via-slate-950 to-slate-900" />
+        )}
+
+        {/* Multi-layered gradient overlays */}
+        <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/50 to-slate-950" />
+      </div>
+
       {/* Hero Section */}
-      <div className="relative overflow-hidden py-20 sm:py-28 px-5">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950/0 to-slate-950/0 pointer-events-none" />
-        
+      <div className="relative overflow-hidden py-20 sm:py-28 px-5 z-10">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-6 backdrop-blur-md">
             <FaGraduationCap size={16} /> About DigiCampus
           </div>
           
@@ -32,17 +57,17 @@ export default function About() {
             Empowering the Next Generation of <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">Tech Leaders</span>
           </h1>
           
-          <p className="mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto">
             DigiCampus is a modern ed-tech ecosystem built to bridge the gap between traditional education and industry requirements through hands-on learning, practical projects, and expert guidance.
           </p>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="max-w-6xl mx-auto px-5 pb-20">
+      <div className="max-w-6xl mx-auto px-5 pb-20 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {stats.map((stat, index) => (
-            <div key={index} className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-xl transition-all duration-300 hover:border-indigo-500/50 hover:bg-slate-900">
+            <div key={index} className="rounded-3xl border border-slate-800/80 bg-slate-900/70 p-6 backdrop-blur-xl transition-all duration-300 hover:border-indigo-500/50 hover:bg-slate-900/90 shadow-xl shadow-black/20">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mb-4">
                 {stat.icon}
               </div>
@@ -54,15 +79,15 @@ export default function About() {
       </div>
 
       {/* Mission & Vision Section */}
-      <div className="max-w-6xl mx-auto px-5 pb-24">
+      <div className="max-w-6xl mx-auto px-5 pb-24 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           
           {/* Left Text Content */}
-          <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-8 sm:p-10 backdrop-blur-xl">
+          <div className="rounded-3xl border border-slate-800/80 bg-slate-900/80 p-8 sm:p-10 backdrop-blur-xl shadow-xl shadow-black/20">
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-4">
               Our Core Mission & Vision
             </h2>
-            <p className="text-sm sm:text-base text-slate-400 leading-relaxed mb-6">
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-6">
               We believe that quality technical education should be accessible, practical, and directly aligned with modern job market trends. Our platform focuses on experiential learning where students don't just read code, they write, debug, and deploy real products.
             </p>
             
@@ -77,7 +102,7 @@ export default function About() {
           </div>
 
           {/* Right Card / CTA Box */}
-          <div className="rounded-3xl bg-gradient-to-tr from-indigo-900/40 via-violet-900/20 to-slate-900 border border-indigo-500/30 p-8 sm:p-10 backdrop-blur-xl flex flex-col justify-between">
+          <div className="rounded-3xl bg-gradient-to-tr from-indigo-950/60 via-violet-950/40 to-slate-900/80 border border-indigo-500/30 p-8 sm:p-10 backdrop-blur-xl flex flex-col justify-between shadow-xl shadow-black/20">
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
                 Ready to accelerate your career?
@@ -96,7 +121,7 @@ export default function About() {
               </Link>
               <Link
                 to="/login"
-                className="flex items-center justify-center rounded-xl border border-slate-700 bg-slate-950/40 px-6 py-3.5 text-sm font-bold text-slate-300 transition-all duration-200 hover:bg-slate-800 hover:text-white"
+                className="flex items-center justify-center rounded-xl border border-slate-700 bg-slate-950/60 px-6 py-3.5 text-sm font-bold text-slate-300 transition-all duration-200 hover:bg-slate-800 hover:text-white backdrop-blur-md"
               >
                 Sign In
               </Link>

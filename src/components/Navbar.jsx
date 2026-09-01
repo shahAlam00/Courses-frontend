@@ -106,7 +106,7 @@ export default function Navbar() {
           {[
             { name: "Home", path: "/" },
             { name: "Courses", path: "/courses" },
-            { name: "Success Stories", path: "/#success" },
+            { name: "Success Stories", path: "/success/stories" },
             { name: "About", path: "/about" },
             { name: "Contact", path: "/contact" },
           ].map((item) => {
@@ -228,13 +228,17 @@ export default function Navbar() {
               Courses
             </Link>
 
-            <a
+            <Link
               onClick={() => setOpen(false)}
-              href="#success"
-              className="rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50 transition"
+              to="/success/stories"
+              className={`rounded-xl px-4 py-3 font-semibold transition ${
+                isActive("/success/stories") ? "bg-indigo-50 text-indigo-600" : "text-slate-700 hover:bg-slate-50"
+              }`}
             >
               Success Stories
-            </a>
+            </Link>
+
+        
 
             <Link
               onClick={() => setOpen(false)}

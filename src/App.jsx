@@ -12,6 +12,7 @@ import About from "./components/About";
 import Contact from "./components/Contact";
 import Success from "./components/Success";
 import CoursePlayer from "./components/CoursePlayer";
+import SuccessStory from "./pages/SuccessStory";
 
 function App() {
   const location = useLocation();
@@ -26,6 +27,7 @@ function App() {
         <Route path="/courses/:id" element={<CourseDetails />} />
         <Route path="/watch/:courseId" element={<CoursePlayer />} />
         <Route path="/success" element={<Success />} />
+        <Route path="/success/stories" element={<SuccessStory/>} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />

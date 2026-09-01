@@ -117,7 +117,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <FaPhoneAlt size={15} className="text-indigo-400 shrink-0" />
-                <span>+91 (123) 456-7890</span>
+                <span>+91 8448034781</span>
               </li>
               <li className="flex items-center gap-3">
                 <FaEnvelope size={15} className="text-indigo-400 shrink-0" />
@@ -130,7 +130,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} DigiCampus Academy. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} DigiCampus Academy. All rights reserved. Registered Company.</p>
           <div className="flex gap-6">
             <a href="#" className="transition hover:text-slate-400">Privacy Policy</a>
             <a href="#" className="transition hover:text-slate-400">Terms of Service</a>
