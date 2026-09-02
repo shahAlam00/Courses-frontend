@@ -39,11 +39,29 @@ export default function CoursePlayer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [marking, setMarking] = useState(false);
+  const [subtitles, setSubtitles] = useState(false);
+  const [quality, setQuality] = useState("hd1080");
+  const [showQualityMenu, setShowQualityMenu] = useState(false);
+
+  const QUALITIES = [
+    { label: "1080p HD", value: "hd1080" },
+    { label: "720p HD",  value: "hd720"  },
+    { label: "480p",     value: "large"  },
+    { label: "360p",     value: "medium" },
+    { label: "240p",     value: "small"  },
+  ];
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
+
+  useEffect(() => {
+    if (!showQualityMenu) return;
+    const close = () => setShowQualityMenu(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [showQualityMenu]);
 
   useEffect(() => {
     if (!courseId) return;
@@ -125,9 +143,24 @@ export default function CoursePlayer() {
   const isCompleted = (lessonId) =>
     Array.isArray(completedLessons) && completedLessons.includes(lessonId?.toString());
 
+  const buildYoutubeUrl = (url) => {
+    const base = getYoutubeEmbedUrl(url);
+    if (!base) return "";
+    const params = new URLSearchParams({
+      modestbranding: "1",
+      rel: "0",
+      iv_load_policy: "3",
+      controls: "1",
+      cc_load_policy: subtitles ? "1" : "0",
+      cc_lang_pref: "en",
+      vq: quality,
+    });
+    return `${base.split("?")[0]}?${params.toString()}`;
+  };
+
   const videoUrl = activeLesson
     ? activeLesson.videoType === "youtube"
-      ? getYoutubeEmbedUrl(activeLesson.videoUrl)
+      ? buildYoutubeUrl(activeLesson.videoUrl)
       : activeLesson.videoUrl
     : "";
 
@@ -203,28 +236,73 @@ export default function CoursePlayer() {
             <>
               {/* Video Player */}
 {/* Video Player */}
-<div className="w-full bg-black flex-shrink-0 relative overflow-hidden" style={{ aspectRatio: "16/9", maxHeight: "68vh" }}>
+<div className="w-full bg-black flex-shrink-0 relative" style={{ aspectRatio: "16/9", maxHeight: "68vh" }}>
   {activeLesson.videoType === "youtube" ? (
-    <div className="relative w-full h-full overflow-hidden bg-black">
-      {/* Scale thoda kam kiya taaki fullscreen aur controls properly dikhein */}
+    <>
       <iframe
-        key={activeLesson._id}
+        key={`${activeLesson._id}-${subtitles}-${quality}`}
         src={videoUrl}
         title={activeLesson.title}
-        className="absolute top-1/2 left-1/2 w-[106%] h-[106%] -translate-x-1/2 -translate-y-1/2 border-0"
+        className="absolute inset-0 w-full h-full border-0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
       />
-      {/* Sirf ek patli si transparent strip jo top title aur logo ko block karegi par controls ko nahi rokti */}
-      <div className="absolute top-0 left-0 right-0 h-12 pointer-events-auto z-10 bg-transparent" onClick={(e) => e.stopPropagation()} />
-    </div>
+      {/* Controls bar */}
+      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-2 px-3 py-2 bg-gradient-to-t from-black/80 to-transparent z-10">
+        {/* Subtitles toggle */}
+        <button
+          onClick={() => setSubtitles((p) => !p)}
+          title={subtitles ? "Turn off subtitles" : "Turn on subtitles"}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+            subtitles
+              ? "bg-indigo-600 text-white"
+              : "bg-white/10 text-white hover:bg-white/20"
+          }`}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-9 8H5v-2h6v2zm8 0h-6v-2h6v2zm-8 4H5v-2h6v2zm8 0h-6v-2h6v2z"/>
+          </svg>
+          CC
+        </button>
+
+        {/* Quality selector */}
+        <div className="relative">
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowQualityMenu((p) => !p); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 text-white hover:bg-white/20 transition"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>
+            </svg>
+            {QUALITIES.find((q) => q.value === quality)?.label ?? "Quality"}
+          </button>
+          {showQualityMenu && (
+            <div className="absolute bottom-10 left-0 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl z-20 min-w-[120px]">
+              {QUALITIES.map((q) => (
+                <button
+                  key={q.value}
+                  onClick={() => { setQuality(q.value); setShowQualityMenu(false); }}
+                  className={`w-full text-left px-4 py-2.5 text-xs font-semibold transition ${
+                    quality === q.value
+                      ? "bg-indigo-600 text-white"
+                      : "text-slate-300 hover:bg-slate-800"
+                  }`}
+                >
+                  {q.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   ) : (
     <video
       key={activeLesson._id}
       src={videoUrl}
       controls
       autoPlay
-      className="w-full h-full"
+      className="absolute inset-0 w-full h-full"
     />
   )}
 </div>

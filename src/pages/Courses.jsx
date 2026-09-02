@@ -15,7 +15,9 @@ export default function Courses() {
   useEffect(() => {
     API.get("/courses/all")
       .then((res) => {
-        const mapped = res.data.data.map((c) => ({
+        const mapped = res.data.data
+          .filter((c) => c.status === "Published")
+          .map((c) => ({
           id: c._id,
           title: c.title,
           category: c.category,
@@ -220,12 +222,7 @@ export default function Courses() {
                   >
                     View Details
                   </Link>
-                  <Link
-                    to="/register"
-                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-indigo-50 border border-indigo-100 py-3 text-xs font-bold text-indigo-600 transition-all duration-200 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 shadow-sm"
-                  >
-                    Enroll <FaArrowRight size={12} />
-                  </Link>
+            
                 </div>
 
               </div>
