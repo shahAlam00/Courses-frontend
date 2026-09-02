@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaGraduationCap, FaUser, FaEnvelope, FaLock } from "react-icons/fa";
+import { FaGraduationCap, FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import API from "../utils/axios.js";
 
@@ -12,12 +12,14 @@ export default function Register() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: "",
+    phone: "",
+    password: ""
   });
 
   const [errors, setErrors] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     general: "",
   });
@@ -34,7 +36,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let newErrors = { name: "", email: "", password: "", general: "" };
+    let newErrors = { name: "", email: "", phone: "", password: "", general: "" };
     let isValid = true;
 
     // Name validation
@@ -49,6 +51,15 @@ export default function Register() {
       isValid = false;
     } else if (!formData.email.includes("@") || !formData.email.includes(".")) {
       newErrors.email = "Please enter a valid email address.";
+      isValid = false;
+    }
+
+    // Phone validation with inline warning
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required.";
+      isValid = false;
+    } else if (formData.phone.trim().length < 10) {
+      newErrors.phone = "Please enter a valid phone number.";
       isValid = false;
     }
 
@@ -69,17 +80,12 @@ export default function Register() {
         const response = await API.post("/auth/register", {
           name: formData.name,
           email: formData.email,
+          phone: formData.phone,
           password: formData.password,
         });
 
-        // Agar registration ke baad turant token milta hai ya login page bhejna hai
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-          navigate("/");
-        } else {
-          // Success ke baad direct home ya login redirect
-          navigate("/");
-        }
+        localStorage.setItem("token", response.data.token);
+        navigate("/student/dashboard");
       } catch (err) {
         const errorMsg = err.response?.data?.message || "Registration failed. Try again.";
         setErrors((prev) => ({ ...prev, general: errorMsg }));
@@ -174,6 +180,36 @@ export default function Register() {
               {errors.email && (
                 <p className="mt-1.5 text-xs font-medium text-red-400">
                   {errors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Phone Number Field */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                Phone Number
+              </label>
+              <div className="relative mt-2">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">
+                  <FaPhone size={15} />
+                </div>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  autoComplete="off"
+                  placeholder="9876543210"
+                  className={`w-full rounded-xl bg-slate-950/60 pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 border transition-all outline-none ${
+                    errors.phone 
+                      ? "border-red-500 focus:ring-2 focus:ring-red-500/20" 
+                      : "border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                  }`}
+                />
+              </div>
+              {errors.phone && (
+                <p className="mt-1.5 text-xs font-medium text-red-400">
+                  {errors.phone}
                 </p>
               )}
             </div>

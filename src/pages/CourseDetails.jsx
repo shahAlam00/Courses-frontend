@@ -1,6 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { loadStripe } from "@stripe/stripe-js";
 import { 
   FaStar, 
   FaClock, 
@@ -14,9 +13,6 @@ import {
   FaCheck 
 } from "react-icons/fa";
 import API from "../utils/axios";
-
-// Vite env se publishable key load kar rahe hain
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function CourseDetails() {
   const { id } = useParams();
@@ -39,7 +35,7 @@ export default function CourseDetails() {
           level: c.level,
           language: c.language,
           originalPrice: `₹${c.originalPrice}`,
-          rawPrice: c.price, // Stripe ke liye number format me price
+          rawPrice: c.price,
           price: `₹${c.price}`,
           duration: `${c.duration} Hours`,
           accessDuration: c.accessDuration,
@@ -54,32 +50,30 @@ export default function CourseDetails() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Stripe Checkout Handler
-// Stripe Checkout Handler (Updated & Modern Way)
+  // Direct Enrollment Handler (Stripe removed)
   const handleEnroll = async () => {
     try {
       setEnrolling(true);
 
-      const { data } = await API.post("/courses/create-checkout-session", {
+      const { data } = await API.post("/courses/enroll", {
         courseId: course.id,
-        courseName: course.title,
-        price: course.rawPrice,
       });
 
-      // Backend se jo session data aaya hai, usme se url nikal kar seedha redirect karo
-      if (data.url) {
-        window.location.href = data.url;
+      if (data.success) {
+        alert("Enrolled successfully!");
+        navigate("/student/dashboard"); // Ya jahan bhi aapka dashboard/purchased courses route ho
       } else {
-        alert("Could not create payment session URL.");
+        alert(data.message || "Enrollment failed.");
       }
 
     } catch (error) {
-      console.error("Payment error:", error);
-      alert(`Payment error: ${error.response?.data?.message || error.message || "Something went wrong!"}`);
+      console.error("Enrollment error:", error);
+      alert(`Error: ${error.response?.data?.message || error.message || "Something went wrong!"}`);
     } finally {
       setEnrolling(false);
     }
   };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold pt-28">Loading...</div>;
   if (!course) return <div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold pt-28">Course not found.</div>;
 
@@ -160,14 +154,14 @@ export default function CourseDetails() {
                 </div>
               </div>
 
-              {/* Stripe Button */}
+              {/* Enroll Button */}
               <div className="pt-6">
                 <button
                   onClick={handleEnroll}
                   disabled={enrolling}
                   className="flex items-center justify-center gap-2 w-full rounded-xl bg-indigo-600 py-3.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 transition disabled:opacity-50"
                 >
-                  {enrolling ? "Processing..." : <>Enroll Now <FaArrowRight size={12} /></>}
+                  {enrolling ? "Enrolling..." : <>Enroll Now <FaArrowRight size={12} /></>}
                 </button>
               </div>
             </div>
