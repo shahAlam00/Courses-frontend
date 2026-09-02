@@ -4,12 +4,12 @@ import {
   Menu,
   X,
   ArrowRight,
-  GraduationCap,
   User,
   LogOut,
   ChevronDown,
 } from "lucide-react";
-import API from "../utils/axios.js"; // Apne axios instance ka path check kar lein
+import Logo from "../assets/Logo.png"
+import API from "../utils/axios.js";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -21,7 +21,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-  // Check login status and fetch user profile name if available
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -30,7 +29,6 @@ export default function Navbar() {
       if (savedName) {
         setUserName(savedName);
       } else {
-        // API call to fetch user details if needed
         API.get("/auth/profile")
           .then((res) => {
             const name = res.data?.name || res.data?.user?.name || "";
@@ -39,18 +37,15 @@ export default function Navbar() {
               localStorage.setItem("userName", name);
             }
           })
-          .catch(() => {
-            // Fallback agar API fail ho jaye
-          });
+          .catch(() => {});
       }
     } else {
       setIsLoggedIn(false);
       setUserName("");
     }
-    setDropdownOpen(false); // Close dropdown on route change
+    setDropdownOpen(false);
   }, [location]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -70,10 +65,8 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  // Helper to check if a tab is active
   const isActive = (path) => location.pathname === path;
 
-  // Get first letter of the name for avatar
   const getInitial = () => {
     if (userName && userName.trim().length > 0) {
       return userName.trim().charAt(0).toUpperCase();
@@ -85,10 +78,10 @@ export default function Navbar() {
     <header className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between rounded-2xl border border-slate-200/80 bg-white/80 px-5 shadow-xl shadow-slate-900/5 backdrop-blur-xl lg:px-8">
 
-        {/* Logo */}
+        {/* Logo (Background container removed, image width/height increased and object-contain added) */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30 transition-transform duration-300 group-hover:scale-105">
-            <GraduationCap size={24} />
+          <div className="flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+            <img src={Logo} alt="DigiCampus Logo" className="h-12 w-12 object-contain" />
           </div>
 
           <div>
@@ -143,7 +136,6 @@ export default function Navbar() {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-slate-50 py-1.5 pl-1.5 pr-3 text-sm font-bold text-slate-700 transition hover:bg-slate-100 shadow-sm"
               >
-                {/* Circular Profile Icon with First Letter */}
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white font-black text-xs shadow-inner">
                   {getInitial() ? getInitial() : <User size={15} />}
                 </div>
@@ -238,8 +230,6 @@ export default function Navbar() {
               Success Stories
             </Link>
 
-        
-
             <Link
               onClick={() => setOpen(false)}
               to="/about"
@@ -266,9 +256,9 @@ export default function Navbar() {
               <>
                 <Link
                   onClick={() => setOpen(false)}
-                  to="/profile"
+                  to="/student/dashboard"
                   className={`rounded-xl px-4 py-3 font-semibold transition flex items-center gap-3 ${
-                    isActive("/profile") ? "bg-indigo-50 text-indigo-600" : "text-slate-700 hover:bg-slate-50"
+                    isActive("/student/dashboard") ? "bg-indigo-50 text-indigo-600" : "text-slate-700 hover:bg-slate-50"
                   }`}
                 >
                   <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-white font-black text-xs">
