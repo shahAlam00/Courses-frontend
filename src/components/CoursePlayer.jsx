@@ -77,10 +77,14 @@ export default function CoursePlayer() {
           const profileRes = await API.get("/auth/profile");
           const purchased = profileRes.data.data?.purchasedCourses || [];
           const enrollment = purchased.find(
-            (pc) => pc._id?.toString() === courseId?.toString()
+            (pc) =>
+              pc.course?._id?.toString() === courseId ||
+              pc.course?.toString() === courseId ||
+              pc._id?.toString() === courseId
           );
           if (enrollment) {
-            setCompletedLessons(enrollment.completedLessons || []);
+            const cl = enrollment.completedLessons;
+            setCompletedLessons(Array.isArray(cl) ? cl : []);
           }
         } catch {}
 
@@ -118,7 +122,8 @@ export default function CoursePlayer() {
   const progress = totalLessons > 0
     ? Math.round((completedLessons.length / totalLessons) * 100)
     : 0;
-  const isCompleted = (lessonId) => completedLessons.includes(lessonId?.toString());
+  const isCompleted = (lessonId) =>
+    Array.isArray(completedLessons) && completedLessons.includes(lessonId?.toString());
 
   const videoUrl = activeLesson
     ? activeLesson.videoType === "youtube"
