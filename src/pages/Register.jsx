@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaGraduationCap, FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
+import { FaGraduationCap, FaUser, FaEnvelope, FaLock, FaPhone, FaArrowLeft } from "react-icons/fa";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import API from "../utils/axios.js";
 
@@ -96,15 +96,22 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md px-5">
-        
-        {/* Brand Logo */}
-        <Link to="/" className="flex items-center justify-center gap-3 group">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30">
-            <FaGraduationCap size={26} />
-          </div>
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+      
+      {/* Back to Home Button */}
+      <div className="absolute top-6 left-6 sm:left-12">
+        <Link 
+          to="/" 
+          className="inline-flex items-center gap-2 rounded-xl bg-slate-900/80 border border-slate-800 px-4 py-2.5 text-xs font-bold text-slate-300 shadow-lg backdrop-blur-xl transition-all hover:bg-slate-800 hover:text-white"
+        >
+          <FaArrowLeft size={12} />
+          <span>Back to Home</span>
         </Link>
+      </div>
+
+      <div className="sm:mx-auto sm:w-full sm:max-w-md px-5">
+        {/* Brand Logo */}
+   
         <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-white">
           Create an Account
         </h2>

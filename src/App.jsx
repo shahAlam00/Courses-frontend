@@ -17,10 +17,13 @@ import SuccessStory from "./pages/SuccessStory";
 function App() {
   const location = useLocation();
   const isPlayerPage = location.pathname.startsWith("/watch/");
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+
+  const hideLayout = isPlayerPage || isAuthPage;
 
   return (
     <>
-      {!isPlayerPage && <Navbar />}
+      {!hideLayout && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/courses" element={<Courses />} />
@@ -34,7 +37,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
       </Routes>
-      {!isPlayerPage && <Footer />}
+      {!hideLayout && <Footer />}
     </>
   );
 }
