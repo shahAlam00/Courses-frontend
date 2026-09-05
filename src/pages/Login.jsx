@@ -69,11 +69,27 @@ export default function Login() {
 
         navigate("/");
       } catch (err) {
-        const errorMsg = err.response?.data?.message || "Invalid email or password.";
-        setErrors((prev) => ({ ...prev, general: errorMsg }));
-      } finally {
-        setLoading(false);
-      }
+  if (err.response?.status === 429) {
+    setErrors((prev) => ({
+      ...prev,
+      general:
+        err.response?.data?.message ||
+        "Too many login attempts. Please try again after 15 minutes.",
+    }));
+    return;
+  }
+
+  const errorMsg =
+    err.response?.data?.message ||
+    "Invalid email or password.";
+
+  setErrors((prev) => ({
+    ...prev,
+    general: errorMsg,
+  }));
+} finally {
+  setLoading(false);
+}
     }
   };
 
@@ -95,7 +111,7 @@ export default function Login() {
         {/* Brand Logo */}
 
         <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-white">
-          Welcome Back to DigiCampus
+          Welcome Back to 
         </h2>
         <p className="mt-2 text-center text-sm text-slate-400">
           Please enter your details to sign in and continue learning.
